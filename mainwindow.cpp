@@ -171,17 +171,10 @@ void MainWindow::addFiles(QStringList pathList) {
 
 void MainWindow::on_run_button_clicked()
 {
-
     ui->run_button->setEnabled(false);
     ui->progressBar->setMaximum(images.size());
 
-    processor.preview = false;
-    processor.images = images;
-    processor.angle = ui->angle_box->value();
-    processor.reverse = ui->reverse_order->isChecked();
-    processor.scale_x = ui->scale_x->value();
-    processor.scale_y = ui->scale_y->value();
-    processor.blending = ui->blending->value();
+    set_ui_values(false);
     processor.start();
 }
 
@@ -199,6 +192,22 @@ void MainWindow::processor_error(const QString& error) {
     ui->processor_info->setText(error);
     ui->statusBar->showMessage(error);
     QMessageBox::critical(this, "TimeSlicer", error);
+}
+
+
+void MainWindow::set_ui_values(bool for_preview) {
+  processor.preview = for_preview;
+  processor.images = images;
+  processor.angle = ui->linear_angle->value();
+  processor.reverse = ui->reverse_order->isChecked();
+  processor.scale_x = ui->scale_x->value();
+  processor.scale_y = ui->scale_y->value();
+  processor.blending = ui->blending->value();
+  processor.slice_type = ui->radial_button->isChecked() ? SliceProcessor::SliceType::Radial : SliceProcessor::SliceType::Linear;
+  processor.radial_coverage = ui->radial_coverage->value();
+  processor.radial_start = ui->radial_start->value();
+  processor.origin_x = ui->origin_x->value();
+  processor.origin_y = ui->origin_y->value();
 }
 
 
@@ -223,15 +232,8 @@ void MainWindow::update_preview() {
         }
     }
 
-    processor.preview = true;
-    processor.images = images;
-    processor.angle = ui->angle_box->value();
-    processor.reverse = ui->reverse_order->isChecked();
-    processor.scale_x = ui->scale_x->value();
-    processor.scale_y = ui->scale_y->value();
-    processor.blending = ui->blending->value();
+    set_ui_values(true);
     processor.start();
-
 }
 
 void MainWindow::preview_ready() {

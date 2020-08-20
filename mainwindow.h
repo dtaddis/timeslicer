@@ -49,6 +49,7 @@ private slots:
 
     void processor_error(const QString& error);
 
+    void set_ui_values(bool for_preview);
 
     void something_changed();
 

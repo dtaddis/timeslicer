@@ -6,7 +6,7 @@
 #include "math.h"
 
 #define DEG2RAD  0.01745329251
-
+#define RAD2DEG  (1.0 / DEG2RAD)
 
 
 SliceProcessor::SliceProcessor(QObject *parent) :
@@ -15,9 +15,14 @@ SliceProcessor::SliceProcessor(QObject *parent) :
     preview = true;
     blending = 1.0f;
     reverse = false;
-    angle = 40;
-    scale_x = 1;
-    scale_y = 1;
+    angle = 40.0f;
+    scale_x = 1.0f;
+    scale_y = 1.0f;
+    slice_type = SliceType::Linear;
+    radial_coverage = 180.0f;
+    radial_start = -90.0f;
+    origin_x = 0.5f;
+    origin_y = 0.0f;
 }
 
 // QSize thumbnail = size.scaled(200, 200, Qt::KeepAspectRatio);
@@ -92,8 +97,8 @@ void SliceProcessor::run() {
     float sn = sin(DEG2RAD * angle);
     float cn = cos(DEG2RAD * angle);
 
-    //float w = output.width() / images.size();
-    float w = 1 / images.size();
+    // Radial values
+    float segment_angle = radial_coverage / images.size();
 
     QImage layer;
 
@@ -102,6 +107,9 @@ void SliceProcessor::run() {
 
         // Layer indexing
         int pi = reverse ? (images.size() - p - 1) : p;
+
+        float this_segment_min = pi * segment_angle;
+        float this_segment_max = (pi + 1) * segment_angle;
 
         if (preview) {
             layer = thumbs[pi];
@@ -117,61 +125,82 @@ void SliceProcessor::run() {
             }
         }
 
+        float origin_px = origin_x * output.width();
+        float origin_py = origin_y * output.height();
 
         QColor r, o;
 
         for (i = 0; i < output.width(); ++i) {
-        for (j = 0; j < output.height(); ++j) {
+          for (j = 0; j < output.height(); ++j) {
 
-            // To [-1; 1] space
-            float ox = (float)i / output.width() - 0.5;
-            float oy = (float)j / output.height() - 0.5;
-
-            // Transform (rotation + scaling)
-            float cx = scale_x * cn * ox - scale_x * sn * oy;
-            float cy = scale_y * sn * ox + scale_y * cn * oy;
-
-            // TODO: moar stuff here!
-            // non linear transform?
-
-            // Convert back to pixel space
-            int px = (cx + 0.5) * output.width();
-            int py = (cy + 0.5) * output.height();
-
-            // Fiqure out should we copy the pixel to the final version or not
-            /*if (px < int(w*p) + 1 * oy && p > 0)
-                continue;
-            if (px < int(w*(p+1)) + 1 + 1 * oy && p != images.size())
-                continue;*/
             float b = 1;
 
+            if (slice_type == SliceType::Linear)
+            {
+              // To [-1; 1] space
+              float ox = (float)i / output.width() - 0.5;
+              float oy = (float)j / output.height() - 0.5;
 
-            if (pi == 0 && cx < -0.5) {
+              // Transform (rotation + scaling)
+              float cx = scale_x * cn * ox - scale_x * sn * oy;
+              float cy = scale_y * sn * ox + scale_y * cn * oy;
 
-            }
-            else if (pi == images.size() - 1&& cx > 0.5) {
+              // Convert back to pixel space
+              int px = (cx + 0.5) * output.width();
+              int py = (cy + 0.5) * output.height();
 
-            }
-            else {
+              // Fiqure out should we copy the pixel to the final version or not
+              /*if (px < int(w*p) + 1 * oy && p > 0)
+                  continue;
+              if (px < int(w*(p+1)) + 1 + 1 * oy && p != images.size())
+                  continue;*/
 
-                b = blend(2*((images.size()-1) * (cx + 0.5) - pi - 1));
+              if (pi == 0 && cx < -0.5) {
+
+              }
+              else if (pi == images.size() - 1 && cx > 0.5) {
+
+              }
+              else {
+
+                b = blend(2 * ((images.size() - 1) * (cx + 0.5) - pi - 1));
                 if (b < 0.01)
-                    continue;
+                  continue;
+              }
+            }
+            else if (slice_type == SliceType::Radial)
+            {
+              int px = i;
+              int py = output.height() - 1 - j;
+
+              float opp = (float)px - origin_px;
+              float adj = (float)py - origin_py;
+              float angle = RAD2DEG * atan(opp / adj);
+
+              // Allow to start from any angle
+              angle -= radial_start;
+
+              if (angle < this_segment_min) {
+                continue;
+              }
+              else if (angle > this_segment_max) {
+                continue;
+              }
             }
 
             // Sample the layer
             r = layer.pixel(i, j);
 
             if (1) {
-                output.setPixel(i, j, r.rgb());
+              output.setPixel(i, j, r.rgb());
             }
             else {
-                //b = 0.3;
-                o = output.pixel(i, j);
-                output.setPixel(i, j, qRgb(o.red() + b * r.red(), o.green() + b * r.green(), o.blue() + b * r.blue()));
+              //b = 0.3;
+              o = output.pixel(i, j);
+              output.setPixel(i, j, qRgb(o.red() + b * r.red(), o.green() + b * r.green(), o.blue() + b * r.blue()));
             }
 
-        }
+          }
         }
 
 

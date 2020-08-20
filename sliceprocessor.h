@@ -25,6 +25,17 @@ public:
     float angle;
     float scale_x, scale_y;
 
+    enum class SliceType
+    {
+      Linear = 0,
+      Radial
+    };
+
+    SliceType slice_type;
+    float radial_coverage;
+    float radial_start;
+    float origin_x, origin_y;
+
 signals:
     void resultReady(const QString &s);
     void info(const QString &s);
