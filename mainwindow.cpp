@@ -177,8 +177,12 @@ void MainWindow::on_run_button_clicked()
 
     processor.preview = false;
     processor.images = images;
+    processor.angle = ui->angle_box->value();
+    processor.reverse = ui->reverse_order->isChecked();
+    processor.scale_x = ui->scale_x->value();
+    processor.scale_y = ui->scale_y->value();
+    processor.blending = ui->blending->value();
     processor.start();
-
 }
 
 void MainWindow::processor_progress(int i) {
