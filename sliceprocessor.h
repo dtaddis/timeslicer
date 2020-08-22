@@ -28,13 +28,15 @@ public:
     enum class SliceType
     {
       Linear = 0,
-      Radial
+      Radial,
+      Grid
     };
 
     SliceType slice_type;
     float radial_coverage;
     float radial_start;
     float origin_x, origin_y;
+    int grid_rows;
 
 signals:
     void resultReady(const QString &s);

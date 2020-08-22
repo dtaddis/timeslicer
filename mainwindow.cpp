@@ -203,11 +203,25 @@ void MainWindow::set_ui_values(bool for_preview) {
   processor.scale_x = ui->scale_x->value();
   processor.scale_y = ui->scale_y->value();
   processor.blending = ui->blending->value();
-  processor.slice_type = ui->radial_button->isChecked() ? SliceProcessor::SliceType::Radial : SliceProcessor::SliceType::Linear;
+
+  if (ui->linear_button->isChecked()) {
+    processor.slice_type = SliceProcessor::SliceType::Linear;
+  }
+  else if (ui->radial_button->isChecked()) {
+    processor.slice_type = SliceProcessor::SliceType::Radial;
+  }
+  else if (ui->grid_button->isChecked()) {
+    processor.slice_type = SliceProcessor::SliceType::Grid;
+  }
+  else {
+    emit processor.error("Unknown slice type!");
+  }
+
   processor.radial_coverage = ui->radial_coverage->value();
   processor.radial_start = ui->radial_start->value();
   processor.origin_x = ui->origin_x->value();
   processor.origin_y = ui->origin_y->value();
+  processor.grid_rows = ui->grid_rows->value();
 }
 
 

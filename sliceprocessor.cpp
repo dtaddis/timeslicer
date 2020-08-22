@@ -23,6 +23,7 @@ SliceProcessor::SliceProcessor(QObject *parent) :
     radial_start = -90.0f;
     origin_x = 0.5f;
     origin_y = 0.0f;
+    grid_rows = 2;
 }
 
 // QSize thumbnail = size.scaled(200, 200, Qt::KeepAspectRatio);
@@ -99,6 +100,11 @@ void SliceProcessor::run() {
 
     // Radial values
     float segment_angle = radial_coverage / images.size();
+
+    // Grid values
+    int grid_columns = images.size() / grid_rows;
+    float pixels_per_column = output.width() / grid_columns;
+    float pixels_per_row = output.height() / grid_rows;
 
     QImage layer;
 
@@ -184,6 +190,23 @@ void SliceProcessor::run() {
                 continue;
               }
               else if (angle > this_segment_max) {
+                continue;
+              }
+            }
+            else if (slice_type == SliceType::Grid)
+            {
+              int px = i;
+              int py = j;
+
+              // Find out which cell we are in
+              int column = px / pixels_per_column;
+              int row = py / pixels_per_row;
+
+              // Find out which cell is valid for this image
+              int this_image_row = pi / grid_columns;
+              int this_image_column = pi - (this_image_row * grid_columns);
+
+              if ((row != this_image_row) || (column != this_image_column)) {
                 continue;
               }
             }
