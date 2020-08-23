@@ -285,7 +285,7 @@
                <item row="7" column="0">
                 <widget class="QLabel" name="label_8">
                  <property name="text">
-                  <string>Radial origin:</string>
+                  <string>Radial origin</string>
                  </property>
                 </widget>
                </item>
@@ -374,14 +374,14 @@
                <item row="5" column="0">
                 <widget class="QLabel" name="label_11">
                  <property name="text">
-                  <string>Radial coverage</string>
+                  <string>Radial sweep angle</string>
                  </property>
                 </widget>
                </item>
                <item row="6" column="0">
                 <widget class="QLabel" name="label_12">
                  <property name="text">
-                  <string>Radial start</string>
+                  <string>Radial start angle</string>
                  </property>
                 </widget>
                </item>

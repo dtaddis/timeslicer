@@ -114,6 +114,7 @@ void SliceProcessor::run() {
         // Layer indexing
         int pi = reverse ? (images.size() - p - 1) : p;
 
+        // Radial segment
         float this_segment_min = pi * segment_angle;
         float this_segment_max = (pi + 1) * segment_angle;
 
@@ -181,10 +182,19 @@ void SliceProcessor::run() {
 
               float opp = (float)px - origin_px;
               float adj = (float)py - origin_py;
-              float angle = RAD2DEG * atan(opp / adj);
+              float angle = RAD2DEG * atan2(opp, adj);
 
               // Allow to start from any angle
               angle -= radial_start;
+
+              // Wrap angle
+              if (angle < 0.0f) {
+                angle += 360.0f;
+              }
+              else if (angle > 360.0f)
+              {
+                angle -= 360.0f;
+              }
 
               if (angle < this_segment_min) {
                 continue;
