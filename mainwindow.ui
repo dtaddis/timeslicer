@@ -297,16 +297,16 @@
                     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Origin&lt;/span&gt; for radial transition&lt;/p&gt;&lt;p&gt;X and Y coordinates of center of the rotation&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                    </property>
                    <property name="decimals">
-                    <number>1</number>
+                    <number>6</number>
                    </property>
                    <property name="minimum">
-                    <double>-1.000000000000000</double>
+                    <double>-10.000000000000000</double>
                    </property>
                    <property name="maximum">
-                    <double>2.000000000000000</double>
+                    <double>10.000000000000000</double>
                    </property>
                    <property name="singleStep">
-                    <double>0.010000000000000</double>
+                    <double>0.000001000000000</double>
                    </property>
                    <property name="value">
                     <double>0.500000000000000</double>
@@ -316,16 +316,16 @@
                  <item>
                   <widget class="QDoubleSpinBox" name="origin_y">
                    <property name="decimals">
-                    <number>1</number>
+                    <number>6</number>
                    </property>
                    <property name="minimum">
-                    <double>-1.000000000000000</double>
+                    <double>-10.000000000000000</double>
                    </property>
                    <property name="maximum">
-                    <double>2.000000000000000</double>
+                    <double>10.000000000000000</double>
                    </property>
                    <property name="singleStep">
-                    <double>0.010000000000000</double>
+                    <double>0.000001000000000</double>
                    </property>
                   </widget>
                  </item>
