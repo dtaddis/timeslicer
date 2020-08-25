@@ -115,8 +115,8 @@ void SliceProcessor::run() {
         int pi = reverse ? (images.size() - p - 1) : p;
 
         // Radial segment
-        float this_segment_min = pi * segment_angle;
-        float this_segment_max = (pi + 1) * segment_angle;
+        float this_segment_min = p * segment_angle;
+        float this_segment_max = (p + 1) * segment_angle;
 
         if (preview) {
             layer = thumbs[pi];
